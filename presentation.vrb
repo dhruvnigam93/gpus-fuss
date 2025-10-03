@@ -1,0 +1,26 @@
+\frametitle{Demo 2: PyTorch CPU vs GPU}
+\textbf{Setup:} Neural network forward pass
+
+  \vspace{0.5em}
+  \tiny
+\begin{verbatim}
+import torch
+import torch.nn as nn
+
+# Create a simple neural network
+model = nn.Sequential(
+    nn.Linear(1000, 5000),
+    nn.ReLU(),
+    nn.Linear(5000, 5000),
+    nn.ReLU(),
+    nn.Linear(5000, 1000)
+)
+
+# Input data
+x = torch.randn(1000, 1000)
+
+# CPU version                          # GPU version
+model_cpu = model.to('cpu')            model_gpu = model.to('cuda')
+x_cpu = x.to('cpu')                    x_gpu = x.to('cuda')
+output = model_cpu(x_cpu)              output = model_gpu(x_gpu)
+\end{verbatim}
