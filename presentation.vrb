@@ -1,26 +1,45 @@
-\frametitle{Demo 2: PyTorch CPU vs GPU}
-\textbf{Setup:} Neural network forward pass
+\frametitle{Demo 1: NumPy vs CuPy}
+\textbf{Setup:} Large matrix multiplication (5000 × 5000)
 
   \vspace{0.5em}
-  \tiny
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{CPU (NumPy)}
+      \tiny
 \begin{verbatim}
-import torch
-import torch.nn as nn
+import numpy as np
+import time
 
-# Create a simple neural network
-model = nn.Sequential(
-    nn.Linear(1000, 5000),
-    nn.ReLU(),
-    nn.Linear(5000, 5000),
-    nn.ReLU(),
-    nn.Linear(5000, 1000)
-)
+size = 5000
+A = np.random.rand(size, size)
+B = np.random.rand(size, size)
 
-# Input data
-x = torch.randn(1000, 1000)
+start = time.time()
+C = A @ B
+end = time.time()
 
-# CPU version                          # GPU version
-model_cpu = model.to('cpu')            model_gpu = model.to('cuda')
-x_cpu = x.to('cpu')                    x_gpu = x.to('cuda')
-output = model_cpu(x_cpu)              output = model_gpu(x_gpu)
+print(f"Time: {end-start:.3f}s")
+# Result: 1.026s
 \end{verbatim}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{GPU (CuPy)}
+      \tiny
+\begin{verbatim}
+import cupy as cp
+import time
+
+size = 5000
+A = cp.random.rand(size, size)
+B = cp.random.rand(size, size)
+
+start = time.time()
+C = A @ B
+cp.cuda.Stream.null.synchronize()
+end = time.time()
+
+print(f"Time: {end-start:.3f}s")
+# Typical result: ~0.015s
+\end{verbatim}
+    \end{column}
+  \end{columns}
